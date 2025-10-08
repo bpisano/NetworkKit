@@ -2,6 +2,8 @@
 
 A modern, type-safe networking library for Swift.
 
+Read the [full documentation here](https://bpisano.github.io/NetworkKit/).
+
 ## Table of Contents
 
 - [Installation](#installation)
