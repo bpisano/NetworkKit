@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// A protocol that defines the structure for HTTP requests in NetworkKit.
+/// A protocol that defines the structure for HTTP requests.
 ///
 /// ```swift
 /// struct GetBooksRequest: HttpRequest {

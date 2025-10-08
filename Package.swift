@@ -18,7 +18,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "602.0.0")
+        .package(url: "https://github.com/apple/swift-syntax.git", from: "602.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.4.5"),
     ],
     targets: [
         .target(
