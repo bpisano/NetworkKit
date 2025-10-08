@@ -228,11 +228,13 @@ final class DeleteMacroTests: XCTestCase {
     func testDeleteMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Delete("/books/:id", of: DeleteResponse.self)
+            @Delete("/books/:id")
+            @Response(DeleteResponse.self)
             struct DeleteBook {
             }
             """,
             expandedSource: """
+                @Response(DeleteResponse.self)
                 struct DeleteBook {
 
                     typealias Response = DeleteResponse
@@ -260,7 +262,8 @@ final class DeleteMacroTests: XCTestCase {
     func testDeleteMacroWithResponseTypeOnly() {
         assertMacroExpansion(
             """
-            @Delete("/books", of: [DeleteResponse].self)
+            @Delete("/books")
+            @Response([DeleteResponse].self)
             struct DeleteAllBooks {
             }
             """,
@@ -285,7 +288,7 @@ final class DeleteMacroTests: XCTestCase {
                 extension DeleteAllBooks: HttpRequest {
                 }
                 """,
-            macros: ["Delete": DeleteMacro.self]
+            macros: ["Delete": DeleteMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

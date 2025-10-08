@@ -228,7 +228,8 @@ final class PostMacroTests: XCTestCase {
     func testPostMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Post("/books", of: Book.self)
+            @Post("/books")
+            @Response(Book.self)
             struct CreateBook {
             }
             """,
@@ -253,14 +254,15 @@ final class PostMacroTests: XCTestCase {
                 extension CreateBook: HttpRequest {
                 }
                 """,
-            macros: ["Post": PostMacro.self]
+            macros: ["Post": PostMacro.self, "Response": ResponseMacro.self]
         )
     }
 
     func testPostMacroWithResponseTypeAndPublicStruct() {
         assertMacroExpansion(
             """
-            @Post("/books", of: [Book].self)
+            @Post("/books")
+            @Response([Book].self)
             public struct CreateBooks {
             }
             """,
@@ -285,14 +287,15 @@ final class PostMacroTests: XCTestCase {
                 extension CreateBooks: HttpRequest {
                 }
                 """,
-            macros: ["Post": PostMacro.self]
+            macros: ["Post": PostMacro.self, "Response": ResponseMacro.self]
         )
     }
 
     func testPostMacroWithResponseTypeAndBodyProperty() {
         assertMacroExpansion(
             """
-            @Post("/books", of: Book.self)
+            @Post("/books")
+            @Response(Book.self)
             struct CreateBook {
                 let body: CreateBookRequest
             }
@@ -317,7 +320,7 @@ final class PostMacroTests: XCTestCase {
                 extension CreateBook: HttpRequest {
                 }
                 """,
-            macros: ["Post": PostMacro.self]
+            macros: ["Post": PostMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

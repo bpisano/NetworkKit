@@ -8,6 +8,7 @@ A modern, type-safe networking library for Swift.
 - [Quick Start](#quick-start)
 - [Request](#request)
   - [Methods](#methods)
+  - [Response](#response)
   - [Path](#path)
   - [Query](#query)
   - [Body](#body)
@@ -30,7 +31,7 @@ Add the following dependency to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/bpisano/network-kit", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/bpisano/network-kit", .upToNextMajor(from: "1.2.0"))
 ]
 ```
 
@@ -51,7 +52,8 @@ let client = Client("https://api.example.com")
 Requests define the API endpoints and parameters. They're reusable across all environments:
 
 ```swift
-@Get("/users/:id", of: User.self)
+@Get("/users/:id")
+@Response(User.self)
 struct GetUserRequest {
     @Path
     var id: String
@@ -78,12 +80,12 @@ Requests define the API endpoints and parameters. They're reusable across all en
 
 ### Methods
 
-NetworkKit comes with several macros to simplify and streamline request declaration. You can specify the expected response type as the second argument of the macro, for example: `@Get("/users/:id", of: User.self)`. This allows NetworkKit to automatically decode the response into the provided type.
+NetworkKit comes with several macros to simplify and streamline request declaration.
 
 #### GET
 
 ```swift
-@Get("/users", of: [User].self)
+@Get("/users")
 struct GetUsersRequest {
     @Query
     var page: Int
@@ -105,7 +107,7 @@ GET https://api.example.com/users?page=1&limit=20
 #### POST
 
 ```swift
-@Post("/users", of: User.self)
+@Post("/users")
 struct CreateUserRequest {
     @Body
     struct Body: HttpBody {
@@ -133,7 +135,7 @@ Content-Type: application/json
 #### PUT
 
 ```swift
-@Put("/users/:id", of: User.self)
+@Put("/users/:id")
 struct UpdateUserRequest {
     @Path
     var id: String
@@ -183,7 +185,7 @@ DELETE https://api.example.com/users/123
 #### PATCH
 
 ```swift
-@Patch("/users/:id", of: User.self)
+@Patch("/users/:id")
 struct PatchUserRequest {
     @Path
     var id: String
@@ -213,7 +215,7 @@ Content-Type: application/json
 #### HEAD
 
 ```swift
-@Head("/users/:id", of: User.self)
+@Head("/users/:id")
 struct CheckUserRequest {
     @Path
     var id: String
@@ -287,12 +289,47 @@ TRACE https://api.example.com/debug
 
 </details>
 
+### Response
+
+The `@Response` macro allows you to define the type of the response your request expects. This enables NetworkKit to automatically decode the response into the specified type.
+
+```swift
+@Get("/users/:id")
+@Response(User.self)
+struct GetUserRequest {
+    @Path
+    var id: String
+}
+```
+
+> Make sure that the type you specify conforms to `Decodable`.
+
+You can also define your response type directly inside your request:
+
+```swift
+@Get("/users/:id")
+struct GetUserRequest {
+    @Response
+    struct UserDto {
+        let id: String
+        let name: String
+    }
+
+    @Path
+    var id: String
+}
+```
+
+> When used inside a request, don't specify any arguments to the `@Response` macro.
+
+When used this way, the `@Response` macro will automatically add the `Decodable` conformance to your struct.
+
 ### Path
 
 Use `@Path` for URL path parameters. These are replaced in the URL path at runtime:
 
 ```swift
-@Get("/users/:id/posts/:postId", of: Post.self)
+@Get("/users/:id/posts/:postId")
 struct GetPostRequest {
     @Path
     var id: String
@@ -318,7 +355,7 @@ GET https://api.example.com/users/123/posts/456
 Use `@Query` for URL query parameters. These are automatically added to the URL:
 
 ```swift
-@Get("/search", of: [SearchResult].self)
+@Get("/search")
 struct SearchRequest {
     @Query
     var query: String
@@ -343,7 +380,7 @@ GET https://api.example.com/search?query=swift&page=1&limit=20
 You can also provide the name of the query parameter explicitly:
 
 ```swift
-@Get("/search", of: [SearchResult].self)
+@Get("/search")
 struct SearchRequest {
     @Query("q")
     var query: String
@@ -372,7 +409,7 @@ The `HttpBody` protocol defines how your data should be serialized for HTTP requ
 For `Encodable` types, NetworkKit automatically serializes the body as JSON. You can use the `@Body` macro to define your request body:
 
 ```swift
-@Post("/users", of: User.self)
+@Post("/users")
 struct CreateUserRequest {
     @Body
     struct Body {

@@ -1,5 +1,5 @@
 //
-//  TraceMacroTests.swift
+//  ConnectMacroTests.swift
 //  NetworkKit
 //
 //  Created by Benjamin Pisano on 17/07/2025.
@@ -10,22 +10,22 @@ import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-final class TraceMacroTests: XCTestCase {
-    func testTraceMacroExpansion() {
+final class ConnectMacroTests: XCTestCase {
+    func testConnectMacroExpansion() {
         assertMacroExpansion(
             """
-            @Trace("/books")
-            struct TraceBook {
+            @Connect("/books")
+            struct ConnectBook {
             }
             """,
             expandedSource: """
-                struct TraceBook {
+                struct ConnectBook {
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .trace
+                    let method: HttpMethod = .connect
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -36,28 +36,28 @@ final class TraceMacroTests: XCTestCase {
                     let body = EmptyBody()
                 }
 
-                extension TraceBook: HttpRequest {
+                extension ConnectBook: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self]
+            macros: ["Connect": ConnectMacro.self]
         )
     }
 
-    func testTraceMacroExpansionWithPublicStruct() {
+    func testConnectMacroExpansionWithPublicStruct() {
         assertMacroExpansion(
             """
-            @Trace("/books")
-            public struct TraceBook {
+            @Connect("/books")
+            public struct ConnectBook {
             }
             """,
             expandedSource: """
-                public struct TraceBook {
+                public struct ConnectBook {
 
                     public typealias Response = Empty
 
                     public let path: String = "/books"
 
-                    public let method: HttpMethod = .trace
+                    public let method: HttpMethod = .connect
 
                     public var queryParameters: [QueryParameter] {
                         [
@@ -68,114 +68,114 @@ final class TraceMacroTests: XCTestCase {
                     public let body = EmptyBody()
                 }
 
-                extension TraceBook: HttpRequest {
+                extension ConnectBook: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self]
+            macros: ["Connect": ConnectMacro.self]
         )
     }
 
-    func testTraceMacroWithQueryProperties() {
+    func testConnectMacroWithQueryProperties() {
         assertMacroExpansion(
             """
-            @Trace("/books")
-            struct TraceBook {
+            @Connect("/books")
+            struct ConnectBook {
                 @Query
-                var maxHops: Int
+                var timeout: Int
             }
             """,
             expandedSource: """
-                struct TraceBook {
-                    var maxHops: Int
+                struct ConnectBook {
+                    var timeout: Int
 
-                    var _queryMaxHops: QueryParameter {
-                        QueryParameter(key: "maxHops", value: maxHops)
+                    var _queryTimeout: QueryParameter {
+                        QueryParameter(key: "timeout", value: timeout)
                     }
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .trace
+                    let method: HttpMethod = .connect
 
                     var queryParameters: [QueryParameter] {
                         [
-                            _queryMaxHops
+                            _queryTimeout
                         ]
                     }
 
                     let body = EmptyBody()
                 }
 
-                extension TraceBook: HttpRequest {
+                extension ConnectBook: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self, "Query": QueryMacro.self]
+            macros: ["Connect": ConnectMacro.self, "Query": QueryMacro.self]
         )
     }
 
-    func testTraceMacroWithPublicQueryProperties() {
+    func testConnectMacroWithPublicQueryProperties() {
         assertMacroExpansion(
             """
-            @Trace("/books")
-            public struct TraceBook {
+            @Connect("/books")
+            public struct ConnectBook {
                 @Query
-                var maxHops: Int
+                var timeout: Int
             }
             """,
             expandedSource: """
-                public struct TraceBook {
-                    var maxHops: Int
+                public struct ConnectBook {
+                    var timeout: Int
 
-                    var _queryMaxHops: QueryParameter {
-                        QueryParameter(key: "maxHops", value: maxHops)
+                    var _queryTimeout: QueryParameter {
+                        QueryParameter(key: "timeout", value: timeout)
                     }
 
                     public typealias Response = Empty
 
                     public let path: String = "/books"
 
-                    public let method: HttpMethod = .trace
+                    public let method: HttpMethod = .connect
 
                     public var queryParameters: [QueryParameter] {
                         [
-                            _queryMaxHops
+                            _queryTimeout
                         ]
                     }
 
                     public let body = EmptyBody()
                 }
 
-                extension TraceBook: HttpRequest {
+                extension ConnectBook: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self, "Query": QueryMacro.self]
+            macros: ["Connect": ConnectMacro.self, "Query": QueryMacro.self]
         )
     }
 
-    func testTraceMacroWithBodyExpansion() {
+    func testConnectMacroWithBodyExpansion() {
         assertMacroExpansion(
             """
-            @Trace("/books")
-            struct TraceBook {
+            @Connect("/books")
+            struct ConnectBook {
                 @Body
-                struct TraceOptions {
-                    let includeHeaders: Bool
+                struct ConnectOptions {
+                    let tunnelHost: String
                 }
             }
             """,
             expandedSource: """
-                struct TraceBook {
+                struct ConnectBook {
                     @Body
-                    struct TraceOptions {
-                        let includeHeaders: Bool
+                    struct ConnectOptions {
+                        let tunnelHost: String
                     }
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .trace
+                    let method: HttpMethod = .connect
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -183,33 +183,33 @@ final class TraceMacroTests: XCTestCase {
                         ]
                     }
 
-                    let body: TraceOptions
+                    let body: ConnectOptions
                 }
 
-                extension TraceBook: HttpRequest {
+                extension ConnectBook: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self]
+            macros: ["Connect": ConnectMacro.self]
         )
     }
 
-    func testTraceMacroWithExistingBodyProperty() {
+    func testConnectMacroWithExistingBodyProperty() {
         assertMacroExpansion(
             """
-            @Trace("/books")
-            struct TraceBook {
+            @Connect("/books")
+            struct ConnectBook {
                 let body: String = "existing body"
             }
             """,
             expandedSource: """
-                struct TraceBook {
+                struct ConnectBook {
                     let body: String = "existing body"
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .trace
+                    let method: HttpMethod = .connect
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -218,28 +218,29 @@ final class TraceMacroTests: XCTestCase {
                     }
                 }
 
-                extension TraceBook: HttpRequest {
+                extension ConnectBook: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self]
+            macros: ["Connect": ConnectMacro.self]
         )
     }
 
-    func testTraceMacroWithResponseType() {
+    func testConnectMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Trace("/debug/trace", of: TraceResponse.self)
-            struct DebugTrace {
+            @Connect("/proxy")
+            @Response(ConnectResponse.self)
+            struct ConnectProxy {
             }
             """,
             expandedSource: """
-                struct DebugTrace {
+                struct ConnectProxy {
 
-                    typealias Response = TraceResponse
+                    typealias Response = ConnectResponse
 
-                    let path: String = "/debug/trace"
+                    let path: String = "/proxy"
 
-                    let method: HttpMethod = .trace
+                    let method: HttpMethod = .connect
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -250,30 +251,31 @@ final class TraceMacroTests: XCTestCase {
                     let body = EmptyBody()
                 }
 
-                extension DebugTrace: HttpRequest {
+                extension ConnectProxy: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self]
+            macros: ["Connect": ConnectMacro.self, "Response": ResponseMacro.self]
         )
     }
 
-    func testTraceMacroWithResponseTypeAndPublicStruct() {
+    func testConnectMacroWithResponseTypeAndPublicStruct() {
         assertMacroExpansion(
             """
-            @Trace("/debug/trace", of: [TraceResponse].self)
-            public struct DebugTrace {
-                let body: TraceOptions
+            @Connect("/proxy")
+            @Response([ConnectResponse].self)
+            public struct ConnectProxy {
+                let body: ConnectOptions
             }
             """,
             expandedSource: """
-                public struct DebugTrace {
-                    let body: TraceOptions
+                public struct ConnectProxy {
+                    let body: ConnectOptions
 
-                    public typealias Response = [TraceResponse]
+                    public typealias Response = [ConnectResponse]
 
-                    public let path: String = "/debug/trace"
+                    public let path: String = "/proxy"
 
-                    public let method: HttpMethod = .trace
+                    public let method: HttpMethod = .connect
 
                     public var queryParameters: [QueryParameter] {
                         [
@@ -282,10 +284,10 @@ final class TraceMacroTests: XCTestCase {
                     }
                 }
 
-                extension DebugTrace: HttpRequest {
+                extension ConnectProxy: HttpRequest {
                 }
                 """,
-            macros: ["Trace": TraceMacro.self]
+            macros: ["Connect": ConnectMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

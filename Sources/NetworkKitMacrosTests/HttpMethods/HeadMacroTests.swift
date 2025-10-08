@@ -228,7 +228,8 @@ final class HeadMacroTests: XCTestCase {
     func testHeadMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Head("/books/:id", of: HeadResponse.self)
+            @Head("/books/:id")
+            @Response(HeadResponse.self)
             struct HeadBook {
             }
             """,
@@ -253,7 +254,7 @@ final class HeadMacroTests: XCTestCase {
                 extension HeadBook: HttpRequest {
                 }
                 """,
-            macros: ["Head": HeadMacro.self]
+            macros: ["Head": HeadMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

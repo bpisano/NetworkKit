@@ -23,5 +23,6 @@ struct NetworkKitMacros: CompilerPlugin {
         ConnectMacro.self,
         QueryMacro.self,
         BodyMacro.self,
+        ResponseMacro.self,
     ]
 }

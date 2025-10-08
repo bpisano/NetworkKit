@@ -238,7 +238,8 @@ final class GetMacroTests: XCTestCase {
     func testGetMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Get("/users", of: [User].self)
+            @Get("/users")
+            @Response([User].self)
             struct GetUsers {
             }
             """,
@@ -263,14 +264,15 @@ final class GetMacroTests: XCTestCase {
                 extension GetUsers: HttpRequest {
                 }
                 """,
-            macros: ["Get": GetMacro.self]
+            macros: ["Get": GetMacro.self, "Response": ResponseMacro.self]
         )
     }
 
     func testGetMacroWithResponseTypeAndPublicStruct() {
         assertMacroExpansion(
             """
-            @Get("/users", of: User.self)
+            @Get("/users")
+            @Response(User.self)
             public struct GetUser {
             }
             """,
@@ -295,14 +297,15 @@ final class GetMacroTests: XCTestCase {
                 extension GetUser: HttpRequest {
                 }
                 """,
-            macros: ["Get": GetMacro.self]
+            macros: ["Get": GetMacro.self, "Response": ResponseMacro.self]
         )
     }
 
     func testGetMacroWithResponseTypeAndQueryProperties() {
         assertMacroExpansion(
             """
-            @Get("/books", of: [Book].self)
+            @Get("/books")
+            @Response([Book].self)
             struct GetBooks {
                 @Query
                 var search: String
@@ -344,7 +347,9 @@ final class GetMacroTests: XCTestCase {
                 extension GetBooks: HttpRequest {
                 }
                 """,
-            macros: ["Get": GetMacro.self, "Query": QueryMacro.self]
+            macros: [
+                "Get": GetMacro.self, "Query": QueryMacro.self, "Response": ResponseMacro.self,
+            ]
         )
     }
 }

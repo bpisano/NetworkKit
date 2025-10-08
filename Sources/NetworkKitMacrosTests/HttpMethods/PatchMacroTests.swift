@@ -228,7 +228,8 @@ final class PatchMacroTests: XCTestCase {
     func testPatchMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Patch("/books/:id", of: Book.self)
+            @Patch("/books/:id")
+            @Response(Book.self)
             struct PartialUpdateBook {
             }
             """,
@@ -253,14 +254,15 @@ final class PatchMacroTests: XCTestCase {
                 extension PartialUpdateBook: HttpRequest {
                 }
                 """,
-            macros: ["Patch": PatchMacro.self]
+            macros: ["Patch": PatchMacro.self, "Response": ResponseMacro.self]
         )
     }
 
     func testPatchMacroWithResponseTypeAndPublicStruct() {
         assertMacroExpansion(
             """
-            @Patch("/books/:id", of: Book.self)
+            @Patch("/books/:id")
+            @Response(Book.self)
             public struct PartialUpdateBook {
                 let body: PatchRequest
             }
@@ -285,7 +287,7 @@ final class PatchMacroTests: XCTestCase {
                 extension PartialUpdateBook: HttpRequest {
                 }
                 """,
-            macros: ["Patch": PatchMacro.self]
+            macros: ["Patch": PatchMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

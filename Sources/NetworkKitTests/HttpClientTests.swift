@@ -176,23 +176,27 @@ struct HttpClientTests {
 
 // MARK: - Request Types
 
-@Get("/products/:id", of: Product.self)
+@Get("/products/:id")
+@Response(Product.self)
 private struct GetProductRequest {
     @Path
     var id: String
 }
 
-@Get("/products", of: ProductList.self)
+@Get("/products")
+@Response(ProductList.self)
 private struct GetAllProductsRequest {
 }
 
-@Get("/products", of: ProductList.self)
+@Get("/products")
+@Response(ProductList.self)
 private struct GetProductsRequest {
     @Query
     var limit: Int
 }
 
-@Get("/products/category/:category", of: ProductList.self)
+@Get("/products/category/:category")
+@Response(ProductList.self)
 private struct GetProductsByCategoryRequest {
     @Path
     var category: String
@@ -201,13 +205,15 @@ private struct GetProductsByCategoryRequest {
     var limit: Int
 }
 
-@Get("/products/search", of: ProductList.self)
+@Get("/products/search")
+@Response(ProductList.self)
 private struct SearchProductsRequest {
     @Query
     var q: String
 }
 
-@Get("/products", of: ProductList.self)
+@Get("/products")
+@Response(ProductList.self)
 private struct GetProductsWithPaginationRequest {
     @Query
     var skip: Int
@@ -216,13 +222,15 @@ private struct GetProductsWithPaginationRequest {
     var limit: Int
 }
 
-@Get("/products", of: ProductList.self)
+@Get("/products")
+@Response(ProductList.self)
 private struct GetProductsWithFiltersRequest {
     @Query
     var select: String
 }
 
-@Post("/products/add", of: Product.self)
+@Post("/products/add")
+@Response(Product.self)
 private struct CreateProductRequest {
     @Body
     struct Body {
@@ -233,7 +241,8 @@ private struct CreateProductRequest {
     }
 }
 
-@Put("/products/:id", of: Product.self)
+@Put("/products/:id")
+@Response(Product.self)
 private struct UpdateProductRequest {
     @Path
     var id: String
@@ -247,7 +256,8 @@ private struct UpdateProductRequest {
     }
 }
 
-@Delete("/products/:id", of: Product.self)
+@Delete("/products/:id")
+@Response(Product.self)
 private struct DeleteProductRequest {
     @Path
     var id: String

@@ -11,26 +11,19 @@ import Foundation
 ///
 /// ```swift
 /// struct GetBooksRequest: HttpRequest {
-///     let path = "/books/:id"
+///     typealias Response = [Book]
+///     typealias Body = EmptyBody
+///
+///     let path: String = "/books"
 ///     let method: HttpMethod = .get
-///
-///     @Path
-///     var id: String
-///
-///     @Query
-///     var page: Int
-///
-///     @Query
-///     var limit: Int
 /// }
 /// ```
 ///
 /// You can also use `@Get`, `@Post`, `@Put`, `@Delete`, or `@Patch` macros to simplify request creation.
 ///
-/// ### Example with Macro
-///
 /// ```swift
 /// @Get("/books/:id")
+/// @Response([Book].self)
 /// struct GetBooksRequest {
 ///     @Path
 ///     var id: String
@@ -45,6 +38,7 @@ import Foundation
 ///
 /// ## Associated Types
 ///
+/// - `Response`: The type of the response expected from this request, which must conform to `Decodable`
 /// - `Body`: The type of the request body, which must conform to `HttpBody`
 ///
 /// ## Default Implementations

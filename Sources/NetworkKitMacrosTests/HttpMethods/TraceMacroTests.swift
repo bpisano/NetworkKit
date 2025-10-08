@@ -1,5 +1,5 @@
 //
-//  OptionsMacroTests.swift
+//  TraceMacroTests.swift
 //  NetworkKit
 //
 //  Created by Benjamin Pisano on 17/07/2025.
@@ -10,22 +10,22 @@ import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-final class OptionsMacroTests: XCTestCase {
-    func testOptionsMacroExpansion() {
+final class TraceMacroTests: XCTestCase {
+    func testTraceMacroExpansion() {
         assertMacroExpansion(
             """
-            @Options("/books")
-            struct OptionsBook {
+            @Trace("/books")
+            struct TraceBook {
             }
             """,
             expandedSource: """
-                struct OptionsBook {
+                struct TraceBook {
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .options
+                    let method: HttpMethod = .trace
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -36,28 +36,28 @@ final class OptionsMacroTests: XCTestCase {
                     let body = EmptyBody()
                 }
 
-                extension OptionsBook: HttpRequest {
+                extension TraceBook: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self]
+            macros: ["Trace": TraceMacro.self]
         )
     }
 
-    func testOptionsMacroExpansionWithPublicStruct() {
+    func testTraceMacroExpansionWithPublicStruct() {
         assertMacroExpansion(
             """
-            @Options("/books")
-            public struct OptionsBook {
+            @Trace("/books")
+            public struct TraceBook {
             }
             """,
             expandedSource: """
-                public struct OptionsBook {
+                public struct TraceBook {
 
                     public typealias Response = Empty
 
                     public let path: String = "/books"
 
-                    public let method: HttpMethod = .options
+                    public let method: HttpMethod = .trace
 
                     public var queryParameters: [QueryParameter] {
                         [
@@ -68,114 +68,114 @@ final class OptionsMacroTests: XCTestCase {
                     public let body = EmptyBody()
                 }
 
-                extension OptionsBook: HttpRequest {
+                extension TraceBook: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self]
+            macros: ["Trace": TraceMacro.self]
         )
     }
 
-    func testOptionsMacroWithQueryProperties() {
+    func testTraceMacroWithQueryProperties() {
         assertMacroExpansion(
             """
-            @Options("/books")
-            struct OptionsBook {
+            @Trace("/books")
+            struct TraceBook {
                 @Query
-                var includeHidden: Bool
+                var maxHops: Int
             }
             """,
             expandedSource: """
-                struct OptionsBook {
-                    var includeHidden: Bool
+                struct TraceBook {
+                    var maxHops: Int
 
-                    var _queryIncludeHidden: QueryParameter {
-                        QueryParameter(key: "includeHidden", value: includeHidden)
+                    var _queryMaxHops: QueryParameter {
+                        QueryParameter(key: "maxHops", value: maxHops)
                     }
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .options
+                    let method: HttpMethod = .trace
 
                     var queryParameters: [QueryParameter] {
                         [
-                            _queryIncludeHidden
+                            _queryMaxHops
                         ]
                     }
 
                     let body = EmptyBody()
                 }
 
-                extension OptionsBook: HttpRequest {
+                extension TraceBook: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self, "Query": QueryMacro.self]
+            macros: ["Trace": TraceMacro.self, "Query": QueryMacro.self]
         )
     }
 
-    func testOptionsMacroWithPublicQueryProperties() {
+    func testTraceMacroWithPublicQueryProperties() {
         assertMacroExpansion(
             """
-            @Options("/books")
-            public struct OptionsBook {
+            @Trace("/books")
+            public struct TraceBook {
                 @Query
-                var includeHidden: Bool
+                var maxHops: Int
             }
             """,
             expandedSource: """
-                public struct OptionsBook {
-                    var includeHidden: Bool
+                public struct TraceBook {
+                    var maxHops: Int
 
-                    var _queryIncludeHidden: QueryParameter {
-                        QueryParameter(key: "includeHidden", value: includeHidden)
+                    var _queryMaxHops: QueryParameter {
+                        QueryParameter(key: "maxHops", value: maxHops)
                     }
 
                     public typealias Response = Empty
 
                     public let path: String = "/books"
 
-                    public let method: HttpMethod = .options
+                    public let method: HttpMethod = .trace
 
                     public var queryParameters: [QueryParameter] {
                         [
-                            _queryIncludeHidden
+                            _queryMaxHops
                         ]
                     }
 
                     public let body = EmptyBody()
                 }
 
-                extension OptionsBook: HttpRequest {
+                extension TraceBook: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self, "Query": QueryMacro.self]
+            macros: ["Trace": TraceMacro.self, "Query": QueryMacro.self]
         )
     }
 
-    func testOptionsMacroWithBodyExpansion() {
+    func testTraceMacroWithBodyExpansion() {
         assertMacroExpansion(
             """
-            @Options("/books")
-            struct OptionsBook {
+            @Trace("/books")
+            struct TraceBook {
                 @Body
-                struct OptionsFilter {
-                    let scope: String
+                struct TraceOptions {
+                    let includeHeaders: Bool
                 }
             }
             """,
             expandedSource: """
-                struct OptionsBook {
+                struct TraceBook {
                     @Body
-                    struct OptionsFilter {
-                        let scope: String
+                    struct TraceOptions {
+                        let includeHeaders: Bool
                     }
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .options
+                    let method: HttpMethod = .trace
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -183,33 +183,33 @@ final class OptionsMacroTests: XCTestCase {
                         ]
                     }
 
-                    let body: OptionsFilter
+                    let body: TraceOptions
                 }
 
-                extension OptionsBook: HttpRequest {
+                extension TraceBook: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self]
+            macros: ["Trace": TraceMacro.self]
         )
     }
 
-    func testOptionsMacroWithExistingBodyProperty() {
+    func testTraceMacroWithExistingBodyProperty() {
         assertMacroExpansion(
             """
-            @Options("/books")
-            struct OptionsBook {
+            @Trace("/books")
+            struct TraceBook {
                 let body: String = "existing body"
             }
             """,
             expandedSource: """
-                struct OptionsBook {
+                struct TraceBook {
                     let body: String = "existing body"
 
                     typealias Response = Empty
 
                     let path: String = "/books"
 
-                    let method: HttpMethod = .options
+                    let method: HttpMethod = .trace
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -218,28 +218,29 @@ final class OptionsMacroTests: XCTestCase {
                     }
                 }
 
-                extension OptionsBook: HttpRequest {
+                extension TraceBook: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self]
+            macros: ["Trace": TraceMacro.self]
         )
     }
 
-    func testOptionsMacroWithResponseType() {
+    func testTraceMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Options("/api/config", of: OptionsResponse.self)
-            struct ApiConfig {
+            @Trace("/debug/trace")
+            @Response(TraceResponse.self)
+            struct DebugTrace {
             }
             """,
             expandedSource: """
-                struct ApiConfig {
+                struct DebugTrace {
 
-                    typealias Response = OptionsResponse
+                    typealias Response = TraceResponse
 
-                    let path: String = "/api/config"
+                    let path: String = "/debug/trace"
 
-                    let method: HttpMethod = .options
+                    let method: HttpMethod = .trace
 
                     var queryParameters: [QueryParameter] {
                         [
@@ -250,30 +251,31 @@ final class OptionsMacroTests: XCTestCase {
                     let body = EmptyBody()
                 }
 
-                extension ApiConfig: HttpRequest {
+                extension DebugTrace: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self]
+            macros: ["Trace": TraceMacro.self, "Response": ResponseMacro.self]
         )
     }
 
-    func testOptionsMacroWithResponseTypeAndPublicStruct() {
+    func testTraceMacroWithResponseTypeAndPublicStruct() {
         assertMacroExpansion(
             """
-            @Options("/api/config", of: [String].self)
-            public struct ApiConfig {
-                let body: OptionsData
+            @Trace("/debug/trace")
+            @Response([TraceResponse].self)
+            public struct DebugTrace {
+                let body: TraceOptions
             }
             """,
             expandedSource: """
-                public struct ApiConfig {
-                    let body: OptionsData
+                public struct DebugTrace {
+                    let body: TraceOptions
 
-                    public typealias Response = [String]
+                    public typealias Response = [TraceResponse]
 
-                    public let path: String = "/api/config"
+                    public let path: String = "/debug/trace"
 
-                    public let method: HttpMethod = .options
+                    public let method: HttpMethod = .trace
 
                     public var queryParameters: [QueryParameter] {
                         [
@@ -282,10 +284,10 @@ final class OptionsMacroTests: XCTestCase {
                     }
                 }
 
-                extension ApiConfig: HttpRequest {
+                extension DebugTrace: HttpRequest {
                 }
                 """,
-            macros: ["Options": OptionsMacro.self]
+            macros: ["Trace": TraceMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

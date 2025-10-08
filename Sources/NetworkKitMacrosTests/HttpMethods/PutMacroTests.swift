@@ -228,7 +228,8 @@ final class PutMacroTests: XCTestCase {
     func testPutMacroWithResponseType() {
         assertMacroExpansion(
             """
-            @Put("/books/:id", of: Book.self)
+            @Put("/books/:id")
+            @Response(Book.self)
             struct UpdateBook {
             }
             """,
@@ -253,14 +254,15 @@ final class PutMacroTests: XCTestCase {
                 extension UpdateBook: HttpRequest {
                 }
                 """,
-            macros: ["Put": PutMacro.self]
+            macros: ["Put": PutMacro.self, "Response": ResponseMacro.self]
         )
     }
 
     func testPutMacroWithResponseTypeAndBody() {
         assertMacroExpansion(
             """
-            @Put("/books/:id", of: Book.self)
+            @Put("/books/:id")
+            @Response(Book.self)
             struct UpdateBook {
                 let body: UpdateBookRequest
             }
@@ -285,7 +287,7 @@ final class PutMacroTests: XCTestCase {
                 extension UpdateBook: HttpRequest {
                 }
                 """,
-            macros: ["Put": PutMacro.self]
+            macros: ["Put": PutMacro.self, "Response": ResponseMacro.self]
         )
     }
 }

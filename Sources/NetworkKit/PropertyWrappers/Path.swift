@@ -16,10 +16,8 @@ import Foundation
 /// ## Usage
 ///
 /// ```swift
+/// @Get("/users/:id/posts/:postId")
 /// struct GetUserRequest: HttpRequest {
-///     let path = "/users/:id/posts/:postId"
-///     let method: HttpMethod = .get
-///
 ///     @Path
 ///     var id: String
 ///
@@ -28,9 +26,10 @@ import Foundation
 /// }
 ///
 /// // Usage
-/// let request = GetUserRequest()
-/// request.id = "123"
-/// request.postId = "456"
+/// let request = GetUserRequest(
+///   id: "123",
+///   postId: "456"
+/// )
 /// // Results in path: "/users/123/posts/456"
 /// ```
 ///
