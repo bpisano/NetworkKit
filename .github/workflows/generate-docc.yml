@@ -33,7 +33,7 @@ jobs:
           --hosting-base-path NetworkKit
 
       - name: Redirect root to docs/NetworkKit
-        run: echo '<script>window.location.href += "/documentation/networkkit"</script>' > .docs/index.html
+        run: echo '<script>window.location.href += "/documentation/networkkit"</script>' > ./docs/index.html
 
       - name: Setup Pages
         id: pages
