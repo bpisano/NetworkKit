@@ -6,23 +6,62 @@ Learn how to create powerful, type-safe HTTP requests using NetworkKit's macro s
 
 NetworkKit uses Swift macros to transform simple struct definitions into fully-featured HTTP requests. This declarative approach eliminates boilerplate code while providing compile-time safety.
 
+## Table of Contents
+
+- [Basic Request Structure](#basic-request-structure)
+- [HTTP Method Macros](#http-method-macros)
+  - [GET](#get)
+  - [POST](#post)
+  - [PUT](#put)
+  - [PATCH](#patch)
+  - [DELETE](#delete)
+  - [HEAD](#head)
+  - [OPTIONS](#options)
+  - [CONNECT](#connect)
+  - [TRACE](#trace)
+- [Response Types](#response-types)
+  - [External Response Types](#external-response-types)
+  - [Internal Response Types](#internal-response-types)
+  - [Empty Responses](#empty-responses)
+- [Request Parameters](#request-parameters)
+  - [Path Parameters](#path-parameters)
+  - [Query Parameters](#query-parameters)
+  - [Request Bodies](#request-bodies)
+- [Custom Headers](#custom-headers)
+- [MultipartForm](#multipartform)
+- [Best Practices](#best-practices)
+
 ## Basic Request Structure
 
-Every HTTP request in NetworkKit is defined as a struct that uses HTTP method macros:
+Every HTTP request in NetworkKit is the blueprint of a server interaction. It uses a declarative syntax and Swift macros to define the HTTP method, endpoint, parameters, and response type.
 
 ```swift
-@Get("/path")
+@Post("/path/:parameter")
 @Response(ResponseType.self)
 struct MyRequest {
-    // Request properties go here
+    @Path
+    var parameter: String
+
+    @Body
+    struct Body: HttpBody {
+        let someKey: String
+    }
 }
+
+
+let request = MyRequest(
+    parameter: "value", 
+    body: .init(
+        someKey: "data"
+    )
+)
 ```
 
 ## HTTP Method Macros
 
 NetworkKit supports all standard HTTP methods through dedicated macros:
 
-### GET Requests
+### GET
 
 Use `@Get` for retrieving data:
 
@@ -35,7 +74,7 @@ struct GetUserRequest {
 }
 ```
 
-### POST Requests
+### POST
 
 Use `@Post` for creating resources:
 
@@ -51,7 +90,7 @@ struct CreateUserRequest {
 }
 ```
 
-### PUT Requests
+### PUT
 
 Use `@Put` for updating entire resources:
 
@@ -70,7 +109,7 @@ struct UpdateUserRequest {
 }
 ```
 
-### PATCH Requests
+### PATCH
 
 Use `@Patch` for partial updates:
 
@@ -89,7 +128,7 @@ struct PatchUserRequest {
 }
 ```
 
-### DELETE Requests
+### DELETE
 
 Use `@Delete` for removing resources:
 
@@ -101,6 +140,53 @@ struct DeleteUserRequest {
 }
 ```
 
+### HEAD
+
+Use `@Head` for checking if a resource exists without retrieving its content:
+
+```swift
+@Head("/users/:id")
+struct CheckUserRequest {
+    @Path
+    var id: String
+}
+```
+
+### OPTIONS
+
+Use `@Options` for discovering allowed methods on a resource:
+
+```swift
+@Options("/users")
+struct OptionsUserRequest {
+}
+```
+
+### CONNECT
+
+Use `@Connect` for establishing a tunnel to a server:
+
+```swift
+@Connect("/proxy")
+struct ConnectProxyRequest {
+    @Query
+    var host: String
+    
+    @Query
+    var port: Int
+}
+```
+
+### TRACE
+
+Use `@Trace` for performing a message loop-back test:
+
+```swift
+@Trace("/debug")
+struct TraceRequest {
+}
+```
+
 ## Response Types
 
 ### External Response Types
@@ -108,10 +194,11 @@ struct DeleteUserRequest {
 Specify the response type using the `@Response` macro:
 
 ```swift
-@Get("/users")
-@Response([User].self)
-struct GetUsersRequest {
-    // Request properties
+@Get("/user/:id")
+@Response(User.self)
+struct GetUserRequest {
+    @Path
+    var id: String
 }
 ```
 
@@ -122,12 +209,15 @@ struct GetUsersRequest {
 Define response types directly within your request:
 
 ```swift
-@Get("/users")
-struct GetUsersRequest {
+@Get("/user/:id")
+struct GetUserRequest {
+    @Path
+    var id: String
+
     @Response
-    struct UserList {
-        let users: [User]
-        let totalCount: Int
+    struct User {
+        let id: String
+        let name: String
     }
 }
 ```
@@ -143,7 +233,8 @@ For requests that don't return data:
 struct DeleteUserRequest {
     @Path
     var id: String
-    // No @Response needed - defaults to Empty
+
+    // No @Response needed
 }
 ```
 
@@ -174,13 +265,13 @@ Use `@Query` for URL query parameters:
 @Get("/search")
 struct SearchRequest {
     @Query
-    var query: String
+    let query: String
     
     @Query
-    var page: Int
+    let page: Int
     
     @Query("page_size")  // Custom parameter name
-    var pageSize: Int
+    let pageSize: Int
 }
 ```
 
@@ -225,28 +316,7 @@ struct ProtectedRequest {
 }
 ```
 
-## Advanced Features
-
-### Multiple Query Parameters
-
-```swift
-@Get("/api/data")
-struct DataRequest {
-    @Query
-    var startDate: String
-    
-    @Query
-    var endDate: String
-    
-    @Query
-    var categories: [String]  // Will be serialized as comma-separated
-    
-    @Query
-    var includeMetadata: Bool
-}
-```
-
-### File Uploads
+## MultipartForm
 
 Use `MultipartForm` for file uploads:
 
@@ -278,13 +348,15 @@ struct UploadFileRequest {
 // Good
 @Get("/users/:userId/orders")
 struct GetUserOrdersRequest {
-    @Path var userId: String
+    @Path
+    var userId: String
 }
 
 // Avoid
 @Get("/users/:userId/orders")
 struct Request {
-    @Path var userId: String
+    @Path
+    var userId: String
 }
 ```
 
@@ -295,7 +367,8 @@ enum UserAPI {
     @Get("/users/:id")
     @Response(User.self)
     struct Get {
-        @Path var id: String
+        @Path
+        var id: String
     }
     
     @Post("/users")

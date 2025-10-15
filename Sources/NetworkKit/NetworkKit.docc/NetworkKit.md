@@ -46,7 +46,7 @@ struct GetUserRequest {
 ```swift
 let request = GetUserRequest(id: "123", includePosts: true)
 let response = try await client.perform(request)
-let user = response.data
+let user = try response.decodedData
 ```
 
 ## Topics

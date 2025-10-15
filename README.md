@@ -73,7 +73,7 @@ let request = GetUserRequest(
     includePosts: true
 )
 let response = try await client.perform(request)
-let user = response.data
+let user = try response.decodedData
 ```
 
 ## Request
@@ -582,7 +582,7 @@ For requests that return structured data, use the `perform` method with a decoda
 
 ```swift
 let response: Response<User> = try await client.perform(request)
-let user = response.data
+let user = try response.decodedData
 ```
 
 #### Empty Responses

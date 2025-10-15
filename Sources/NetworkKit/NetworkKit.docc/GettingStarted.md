@@ -6,6 +6,22 @@ Learn how to set up and use NetworkKit in your Swift project.
 
 NetworkKit is a modern, type-safe networking library for Swift that uses powerful macros to simplify HTTP request creation. This guide will walk you through the basic setup and your first API call.
 
+## Table of Contents
+
+- [Installation](#installation)
+  - [Swift Package Manager](#swift-package-manager)
+- [Basic Setup](#basic-setup)
+  - [Import NetworkKit](#import-networkkit)
+  - [Create Your First Client](#create-your-first-client)
+  - [Define Your First Request](#define-your-first-request)
+  - [Define Your Response Model](#define-your-response-model)
+  - [Make Your First Request](#make-your-first-request)
+- [What's Next?](#whats-next)
+- [Common Patterns](#common-patterns)
+  - [Error Handling](#error-handling)
+  - [Progress Tracking](#progress-tracking)
+  - [Environment Configuration](#environment-configuration)
+
 ## Installation
 
 ### Swift Package Manager
@@ -59,10 +75,10 @@ Use NetworkKit's macros to define type-safe HTTP requests:
 @Response([User].self)
 struct GetUsersRequest {
     @Query
-    var page: Int = 1
+    let page: Int = 1
     
     @Query
-    var limit: Int = 20
+    let limit: Int = 20
 }
 ```
 
@@ -87,12 +103,14 @@ let request = GetUsersRequest(page: 1, limit: 10)
 
 do {
     let response = try await client.perform(request)
-    let users = response.data // This is [User]
+    let users = try response.decodedData // This is [User]
     print("Fetched \(users.count) users")
 } catch {
     print("Request failed: \(error)")
 }
 ```
+
+> **Note:** Use `response.decodedData` to access the decoded object, and `response.data` for raw response data. This allows you to handle JSON decoding errors separately from network errors.
 
 ## What's Next?
 
@@ -108,15 +126,18 @@ Now that you have NetworkKit set up, explore these topics:
 ### Error Handling
 
 ```swift
-do {
-    let response = try await client.perform(request)
-    // Handle success
-} catch let error as HTTPError {
-    // Handle HTTP errors (4xx, 5xx)
-    print("HTTP Error: \(error.statusCode)")
-} catch {
-    // Handle other errors (network, parsing, etc.)
-    print("Error: \(error)")
+// Throws server related errors
+let response = try await client.perform(request)
+
+// At this point, the server returned a response.
+if response.statusCode == 500 {
+    // Decode the error response body if needed
+    let error = try response.decodedData(as: APIError.self)
+    print("Server error (\(response.statusCode)): \(error.message)")
+} else {
+    // Decode successful response
+    let users = try response.decodedData // uses the type defined in @Response
+    print("Success: \(users.count) users")
 }
 ```
 

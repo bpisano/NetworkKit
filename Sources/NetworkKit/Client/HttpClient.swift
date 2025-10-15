@@ -101,8 +101,7 @@ extension HttpClient {
         onProgress: ((Progress) -> Void)? = nil
     ) async throws -> Response<Request.Response> {
         let (data, response) = try await send(request, onProgress: onProgress)
-        let serverData: Request.Response = try decoder.decode(Request.Response.self, from: data)
-        return .init(data: serverData, response: response)
+        return .init(data: data, response: response, decoder: decoder)
     }
 
     /// Performs an HTTP request and returns the raw response data.
@@ -127,7 +126,7 @@ extension HttpClient {
         onProgress: ((Progress) -> Void)? = nil
     ) async throws -> Response<Data> {
         let (data, response) = try await send(request, onProgress: onProgress)
-        return .init(data: data, response: response)
+        return .init(data: data, response: response, decoder: decoder)
     }
 
     /// Internal method that handles the core request execution logic.

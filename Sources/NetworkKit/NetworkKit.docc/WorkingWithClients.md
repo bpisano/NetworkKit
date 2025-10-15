@@ -6,6 +6,30 @@ Learn how to configure and customize HTTP clients for different environments and
 
 In NetworkKit, a ``Client`` represents a server environment with its base URL and configuration. Clients handle request execution, middleware processing, and response handling, while keeping your request definitions environment-agnostic.
 
+## Table of Contents
+
+- [Creating Clients](#creating-clients)
+  - [Basic Client](#basic-client)
+  - [Multiple Environments](#multiple-environments)
+  - [Environment-Based Configuration](#environment-based-configuration)
+- [Performing Requests](#performing-requests)
+  - [Basic Request Execution](#basic-request-execution)
+  - [Response Types](#response-types)
+  - [Progress Tracking](#progress-tracking)
+  - [Error Handling](#error-handling)
+- [Middleware](#middleware)
+  - [Authentication Middleware](#authentication-middleware)
+  - [Custom Headers Middleware](#custom-headers-middleware)
+  - [Conditional Middleware](#conditional-middleware)
+- [Interceptors](#interceptors)
+  - [Retry Interceptor](#retry-interceptor)
+  - [Response Transformation Interceptor](#response-transformation-interceptor)
+  - [Error Handling Interceptor](#error-handling-interceptor)
+- [Logging](#logging)
+  - [Built-in Logging](#built-in-logging)
+  - [Custom Logger](#custom-logger)
+  - [Conditional Logging](#conditional-logging)
+
 ## Creating Clients
 
 ### Basic Client
@@ -45,12 +69,12 @@ let client = Client("https://api.example.com")
 ### Basic Request Execution
 
 ```swift
-let request = GetUsersRequest(page: 1)
+let request = GetUsersRequest()
 let response = try await client.perform(request)
-let users = response.data
+let users = try response.decodedData
 ```
 
-### Different Response Types
+### Response Types
 
 #### Decoded Responses
 
@@ -64,8 +88,10 @@ struct GetUserRequest {
 }
 
 let response: Response<User> = try await client.perform(request)
-let user = response.data
+let user: User = try response.decodedData
 ```
+
+> The `response.data` contains raw response data, while `response.decodedData` provides the decoded object. This separation allows you to handle decoding errors independently from network errors.
 
 #### Empty Responses
 
@@ -95,15 +121,33 @@ Track progress for long-running requests:
 
 ```swift
 let response = try await client.perform(request) { progress in
-    DispatchQueue.main.async {
-        progressBar.progress = Float(progress.fractionCompleted)
-    }
+    progressBar.progress = Float(progress.fractionCompleted)
 }
+```
+
+### Error handling
+
+With NetworkKit's Response type, error handling follows a two-stage approach. First, handle network-level errors (timeouts, no internet, etc.) when performing the request. Then, check the response status code and handle server errors before attempting to decode the response data.
+
+```swift
+// Throws server related errors such as timeout, no internet, etc.
+let response = try await client.perform(request)
+
+// At this point, the server returned a response.
+// You can then check the status code and handle accordingly.
+if response.statusCode == 500 {
+    // Decode the error response body if needed
+    let error = try response.decodedData(as: APIError.self)
+    throw MyAppError.serverError(error)
+}
+
+// Throws client related errors such as decoding issues.
+let user = try response.decodedData
 ```
 
 ## Middleware
 
-Middleware allows you to modify requests before they're sent. This is perfect for adding authentication, logging, or custom headers.
+Middleware allows you to modify requests before they're sent. You can use it for authentication, logging, or custom headers. Here are some middleware examples.
 
 ### Authentication Middleware
 
@@ -157,7 +201,7 @@ struct ConditionalMiddleware: Middleware {
 
 ## Interceptors
 
-Interceptors allow you to modify responses after they're received but before they're processed.
+Interceptors allow you to modify responses after they're received but before they're processed. Here are some interceptor examples.
 
 ### Retry Interceptor
 
@@ -199,16 +243,13 @@ struct ResponseTransformInterceptor: Interceptor {
         request: some HttpRequest
     ) async throws -> (data: Data, response: URLResponse) {
         // Transform response data if needed
-        if let httpResponse = response as? HTTPURLResponse,
-           httpResponse.statusCode == 200,
-           let transformedData = transformData(data) {
-            return (transformedData, response)
-        }
-        
-        return (data, response)
+        guard let httpResponse = response as? HTTPURLResponse else { return (data, response) }
+        guard httpResponse.statusCode == 200 else { return (data, response) }
+        let transformedData = transformData(data)
+        return (transformedData, response)
     }
     
-    private func transformData(_ data: Data) -> Data? {
+    private func transformData(_ data: Data) -> Data {
         // Your transformation logic here
         return data
     }
@@ -299,83 +340,6 @@ struct ConditionalLogger: ClientLogger {
             print("📥 \(httpResponse.statusCode)")
         }
         #endif
-    }
-}
-```
-
-## Error Handling
-
-### Network Errors
-
-```swift
-do {
-    let response = try await client.perform(request)
-    // Handle success
-} catch let error as HTTPError {
-    switch error.statusCode {
-    case 400:
-        // Bad request
-        break
-    case 401:
-        // Unauthorized
-        break
-    case 404:
-        // Not found
-        break
-    case 500...599:
-        // Server error
-        break
-    default:
-        // Other HTTP error
-        break
-    }
-} catch let error as URLError {
-    switch error.code {
-    case .notConnectedToInternet:
-        // No internet connection
-        break
-    case .timedOut:
-        // Request timed out
-        break
-    default:
-        // Other network error
-        break
-    }
-} catch {
-    // Other errors (parsing, etc.)
-}
-```
-
-### Custom Error Types
-
-```swift
-enum APIError: Error {
-    case invalidResponse
-    case serverMaintenance
-    case rateLimited(retryAfter: TimeInterval)
-}
-
-struct APIErrorInterceptor: Interceptor {
-    func intercept(
-        data: Data,
-        response: URLResponse,
-        client: HttpClient,
-        request: some HttpRequest
-    ) async throws -> (data: Data, response: URLResponse) {
-        guard let httpResponse = response as? HTTPURLResponse else {
-            return (data, response)
-        }
-        
-        switch httpResponse.statusCode {
-        case 429:
-            let retryAfter = httpResponse.value(forHTTPHeaderField: "Retry-After")
-                .flatMap(TimeInterval.init) ?? 60
-            throw APIError.rateLimited(retryAfter: retryAfter)
-        case 503:
-            throw APIError.serverMaintenance
-        default:
-            return (data, response)
-        }
     }
 }
 ```

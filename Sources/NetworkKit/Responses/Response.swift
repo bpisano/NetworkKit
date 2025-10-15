@@ -37,11 +37,10 @@ import Foundation
 /// - Note: For non-HTTP responses (like file URLs), the status code defaults to 200
 ///   and headers defaults to an empty dictionary.
 public struct Response<T> {
-    /// The decoded response data.
+    /// The raw response data.
     ///
-    /// This contains the actual response payload, decoded from the response body
-    /// according to the type `T`.
-    public let data: T
+    /// This contains the complete response body as received from the server.
+    public let data: Data
 
     /// The original URLResponse object.
     ///
@@ -61,6 +60,8 @@ public struct Response<T> {
     /// and header values as string values. For non-HTTP responses, this is empty.
     public let headers: [String: String]
 
+    private let decoder: JSONDecoder
+
     /// Creates a response with the specified data and URLResponse.
     ///
     /// This initializer automatically extracts HTTP-specific information from the
@@ -69,9 +70,10 @@ public struct Response<T> {
     /// - Parameters:
     ///   - data: The decoded response data
     ///   - response: The original URLResponse object
-    public init(data: T, response: URLResponse) {
+    public init(data: Data, response: URLResponse, decoder: JSONDecoder) {
         self.data = data
         self.urlResponse = response
+        self.decoder = decoder
         if let response = response as? HTTPURLResponse {
             self.statusCode = response.statusCode
             self.headers = response.allHeaderFields.reduce(into: [String: String]()) {
@@ -81,6 +83,17 @@ public struct Response<T> {
             self.statusCode = 200
             self.headers = [:]
         }
+    }
+
+    /// Decodes the response data to a specified type.
+    ///
+    /// This method uses the client JSONDecoder to decode the raw response data.
+    /// Use this method if the response returned an error and you still want to
+    /// attempt to decode the data.
+    /// - Parameter type: The type to decode the data to. Must conform to Decodable.
+    /// - Returns: The decoded object of the specified type.
+    func decodedData<D: Decodable>(as type: D.Type) throws -> D {
+        try decoder.decode(D.self, from: data)
     }
 }
 
@@ -92,7 +105,18 @@ extension Response where T == Void {
     ///
     /// - Parameter response: The original URLResponse object
     public init(response: URLResponse) {
-        self.init(data: (), response: response)
+        self.init(data: .init(), response: response, decoder: .init())
+    }
+}
+
+extension Response where T: Decodable {
+    /// The decoded response data of type `T`, if decoding was successful.
+    ///
+    /// This property attempts to decode the raw `data` using the provided `decoder`.
+    public var decodedData: T {
+        get throws {
+            try decoder.decode(T.self, from: data)
+        }
     }
 }
 
