@@ -343,6 +343,27 @@ struct GetPostRequest {
 
 > The path in the macro should use a colon (e.g., `:id`) to indicate a path parameter, and the corresponding Swift property name in your struct must match the parameter name. For example, if your macro is `@Get("/users/:id/posts/:postId")`, your struct should have properties named `id` and `postId`.
 
+Path parameters work with any type that conforms to `PathRepresentable`. NetworkKit provides built-in support for:
+- **String types:** `String`, `Substring`, `Character`
+- **Integer types:** `Int`, `Int8`, `Int16`, `Int32`, `Int64`, `UInt`, `UInt8`, `UInt16`, `UInt32`, `UInt64`
+- **Floating point types:** `Float`, `Double`, `Decimal`
+- **Boolean type:** `Bool`
+- **Foundation types:** `UUID`, `Date`, `URL`, `NSNumber`
+- **Arrays:** `[Element]` where `Element: PathRepresentable`
+
+You can also specify custom path parameter names:
+
+```swift
+@Get("/users/:userId/posts/:postId")
+struct GetPostRequest {
+    @Path("userId")
+    var userIdentifier: String
+    
+    @Path("postId")
+    var documentId: String
+}
+```
+
 <details>
 <summary>Click to see the generated request</summary>
 
@@ -398,7 +419,13 @@ GET https://api.example.com/search?q=swift
 
 </details>
 
-> The type of your query parameter must conform to `CustomStringConvertible`. This ensures that the value can be converted to a string representation suitable for URL encoding.
+> Query parameters work with any type that conforms to `QueryRepresentable`. NetworkKit provides built-in support for:
+- **String types:** `String`, `Substring`, `Character`
+- **Integer types:** `Int`, `Int8`, `Int16`, `Int32`, `Int64`, `UInt`, `UInt8`, `UInt16`, `UInt32`, `UInt64`
+- **Floating point types:** `Float`, `Double`, `Decimal`
+- **Boolean type:** `Bool` (converted to "true"/"false")
+- **Foundation types:** `UUID`, `Date`, `URL`, `NSNumber`
+- **Arrays:** `[Element]` where `Element: QueryRepresentable` (elements joined with commas)
 
 ### Body
 

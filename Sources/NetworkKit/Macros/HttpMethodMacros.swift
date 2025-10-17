@@ -33,7 +33,8 @@
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Get(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "GetMacro")
@@ -66,7 +67,8 @@ public macro Get(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Post(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "PostMacro")
@@ -104,7 +106,8 @@ public macro Post(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Put(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "PutMacro")
@@ -142,7 +145,8 @@ public macro Put(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Patch(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "PatchMacro")
@@ -173,7 +177,8 @@ public macro Patch(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Delete(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "DeleteMacro")
@@ -203,7 +208,8 @@ public macro Delete(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Options(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "OptionsMacro")
@@ -238,7 +244,8 @@ public macro Options(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Head(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "HeadMacro")
@@ -268,7 +275,8 @@ public macro Head(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Trace(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "TraceMacro")
@@ -301,7 +309,8 @@ public macro Trace(_ path: String) =
 ///
 /// - Parameter path: The path for the HTTP request
 @attached(
-    member, names: named(path), named(method), named(queryParameters), named(body), named(Response))
+    member, names: named(path), named(method), named(queryParameters), named(pathParameters),
+    named(body), named(Response))
 @attached(extension, conformances: HttpRequest)
 public macro Connect(_ path: String) =
     #externalMacro(module: "NetworkKitMacros", type: "ConnectMacro")

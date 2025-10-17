@@ -38,6 +38,9 @@ public protocol HttpClient {
     /// The JSON decoder used for decoding response bodies.
     var decoder: JSONDecoder { get set }
 
+    /// The URL session used to perform network requests.
+    var session: URLSession { get set }
+
     /// The logger used for logging request and response information.
     var logger: ClientLogger? { get set }
 
@@ -58,6 +61,11 @@ extension HttpClient {
     ///
     /// Returns a new `JSONDecoder` instance with default configuration.
     public var decoder: JSONDecoder { .init() }
+
+    /// Default URL session implementation.
+    ///
+    /// Returns the shared URL session instance.
+    public var session: URLSession { .shared }
 
     /// Default logger implementation.
     ///
@@ -164,6 +172,7 @@ extension HttpClient {
         let requestPerformer: RequestPerformer = .init()
         var (data, response) = try await requestPerformer.perform(
             urlRequest: urlRequest,
+            with: session,
             onProgress: onProgress
         )
 

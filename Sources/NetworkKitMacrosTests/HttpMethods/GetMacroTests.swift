@@ -33,6 +33,12 @@ final class GetMacroTests: XCTestCase {
                         ]
                     }
 
+                    var pathParameters: [PathParameter] {
+                        [
+
+                        ]
+                    }
+
                     let body = EmptyBody()
                 }
 
@@ -60,6 +66,12 @@ final class GetMacroTests: XCTestCase {
                     public let method: HttpMethod = .get
 
                     public var queryParameters: [QueryParameter] {
+                        [
+
+                        ]
+                    }
+
+                    public var pathParameters: [PathParameter] {
                         [
 
                         ]

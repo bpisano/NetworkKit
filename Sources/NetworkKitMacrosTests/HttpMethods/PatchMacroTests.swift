@@ -32,6 +32,12 @@ final class PatchMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -62,6 +68,12 @@ final class PatchMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -103,6 +115,12 @@ final class PatchMacroTests: XCTestCase {
                             _queryForce
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -140,6 +158,12 @@ final class PatchMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
                             _queryForce
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -182,6 +206,12 @@ final class PatchMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body: BookPatch
                 }
@@ -216,6 +246,12 @@ final class PatchMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
                 }
 
                 extension PartialUpdateBook: HttpRequest {
@@ -245,6 +281,12 @@ final class PatchMacroTests: XCTestCase {
                     var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -280,6 +322,12 @@ final class PatchMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
                 }

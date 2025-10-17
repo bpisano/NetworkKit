@@ -68,6 +68,11 @@ public protocol HttpRequest {
     /// Common values include `.get`, `.post`, `.put`, `.delete`, etc.
     var method: HttpMethod { get }
 
+    /// The path parameters to include in the request.
+    ///
+    /// These parameters will be used to replace path placeholders in the URL path.
+    var pathParameters: [PathParameter] { get }
+
     /// The query parameters to include in the request.
     ///
     /// These parameters will be encoded in the URL as query string parameters.
@@ -112,6 +117,10 @@ public protocol HttpRequest {
 
 extension HttpRequest {
     public var queryParameters: [QueryParameter] {
+        []
+    }
+
+    public var pathParameters: [PathParameter] {
         []
     }
 

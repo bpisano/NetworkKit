@@ -32,6 +32,12 @@ final class TraceMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -62,6 +68,12 @@ final class TraceMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -103,6 +115,12 @@ final class TraceMacroTests: XCTestCase {
                             _queryMaxHops
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -140,6 +158,12 @@ final class TraceMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
                             _queryMaxHops
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -182,6 +206,12 @@ final class TraceMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body: TraceOptions
                 }
@@ -216,6 +246,12 @@ final class TraceMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
                 }
 
                 extension TraceBook: HttpRequest {
@@ -245,6 +281,12 @@ final class TraceMacroTests: XCTestCase {
                     var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -280,6 +322,12 @@ final class TraceMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
                 }

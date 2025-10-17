@@ -32,6 +32,12 @@ final class HeadMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -62,6 +68,12 @@ final class HeadMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -103,6 +115,12 @@ final class HeadMacroTests: XCTestCase {
                             _queryIncludeMetadata
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -140,6 +158,12 @@ final class HeadMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
                             _queryIncludeMetadata
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -182,6 +206,12 @@ final class HeadMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body: HeadOptions
                 }
@@ -216,6 +246,12 @@ final class HeadMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
                 }
 
                 extension HeadBook: HttpRequest {
@@ -245,6 +281,12 @@ final class HeadMacroTests: XCTestCase {
                     var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 

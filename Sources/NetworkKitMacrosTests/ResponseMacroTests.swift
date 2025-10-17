@@ -53,6 +53,12 @@ final class ResponseMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -84,6 +90,12 @@ final class ResponseMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 

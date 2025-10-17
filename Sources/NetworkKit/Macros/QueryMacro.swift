@@ -69,11 +69,78 @@
 /// }
 /// ```
 ///
+/// ## Supported Types (QueryRepresentable)
+///
+/// The `@Query` macro works with any type that conforms to the `QueryRepresentable` protocol.
+/// NetworkKit provides built-in support for a comprehensive set of types:
+///
+/// ### String Types
+/// - `String` - Converted directly to query value
+/// - `Substring` - Converted to String
+/// - `Character` - Converted to String
+///
+/// ### Integer Types
+/// - **Signed**: `Int`, `Int8`, `Int16`, `Int32`, `Int64`
+/// - **Unsigned**: `UInt`, `UInt8`, `UInt16`, `UInt32`, `UInt64`
+///
+/// ### Floating Point Types
+/// - `Float`, `Double`, `Decimal`
+///
+/// ### Boolean Type
+/// - `Bool` - Converted to "true" or "false"
+///
+/// ### Foundation Types
+/// - `UUID` - Converted to UUID string representation
+/// - `Date` - Converted to time interval since 1970
+/// - `URL` - Converted to absolute string
+/// - `NSNumber` - Converted to string value
+///
+/// ### Collection Types
+/// - `Array<Element>` where `Element: QueryRepresentable` - Elements joined with commas
+///
+/// ### Examples with Different Types
+///
+/// ```swift
+/// @Get("/api/users")
+/// struct GetUsersRequest {
+///     @Query
+///     let userId: UUID          // Converted to UUID string
+///
+///     @Query
+///     let page: Int            // Converted to string representation
+///
+///     @Query
+///     let includeActive: Bool  // Converted to "true" or "false"
+///
+///     @Query
+///     let tags: [String]       // Converted to comma-separated values
+/// }
+/// ```
+///
+/// ### Custom QueryRepresentable Types
+///
+/// You can make your own types work with `@Query` by conforming to `QueryRepresentable`:
+///
+/// ```swift
+/// enum SortOrder: String, QueryRepresentable, CaseIterable {
+///     case ascending = "asc"
+///     case descending = "desc"
+///
+///     var queryValue: String { rawValue }
+/// }
+///
+/// @Get("/api/products")
+/// struct GetProductsRequest {
+///     @Query
+///     let sortOrder: SortOrder
+/// }
+/// ```
+///
 /// ## Requirements
 ///
 /// - Should be used with an HTTP method macro (`@Get`, `@Post`, `@Put`, `@Delete`, etc.)
 /// - Can only be applied to stored properties
-/// - Properties should have a type that conforms to `CustomStringConvertible`
+/// - Properties must have a type that conforms to `QueryRepresentable`
 ///
 /// - Parameter name: An optional custom parameter name to use instead of the property name
 @attached(peer, names: arbitrary)

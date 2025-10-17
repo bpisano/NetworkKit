@@ -32,6 +32,12 @@ final class DeleteMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -62,6 +68,12 @@ final class DeleteMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -103,6 +115,12 @@ final class DeleteMacroTests: XCTestCase {
                             _queryForce
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body = EmptyBody()
                 }
@@ -140,6 +158,12 @@ final class DeleteMacroTests: XCTestCase {
                     public var queryParameters: [QueryParameter] {
                         [
                             _queryForce
+                        ]
+                    }
+                
+                    public var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -182,6 +206,12 @@ final class DeleteMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
 
                     let body: DeleteOptions
                 }
@@ -216,6 +246,12 @@ final class DeleteMacroTests: XCTestCase {
 
                         ]
                     }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
+                        ]
+                    }
                 }
 
                 extension DeleteBook: HttpRequest {
@@ -246,6 +282,12 @@ final class DeleteMacroTests: XCTestCase {
                     var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 
@@ -279,6 +321,12 @@ final class DeleteMacroTests: XCTestCase {
                     var queryParameters: [QueryParameter] {
                         [
 
+                        ]
+                    }
+                
+                    var pathParameters: [PathParameter] {
+                        [
+                
                         ]
                     }
 

@@ -65,6 +65,12 @@ public struct Client: HttpClient, Sendable {
     /// You can customize decoding behavior by modifying this property.
     public var decoder: JSONDecoder = .init()
 
+    /// The URL session used for making network requests.
+    ///
+    /// By default, this is set to `URLSession.shared`. You can provide a custom
+    /// session if you need specific configuration (e.g., custom timeout, caching, etc.).
+    public var session: URLSession = .shared
+
     /// The logger used for logging request and response information.
     ///
     /// By default, this is set to `ClientLogger.default`, which provides

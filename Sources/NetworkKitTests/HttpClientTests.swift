@@ -17,7 +17,7 @@ struct HttpClientTests {
     func testGetRequestWithPathParameter() async throws {
         let request = GetProductRequest(id: "1")
         let response = try await client.perform(request)
-        let product: Product = response.data
+        let product: Product = try response.decodedData
 
         #expect(product.id == 1)
         #expect(product.title == "Essence Mascara Lash Princess")
@@ -28,7 +28,7 @@ struct HttpClientTests {
     func testGetRequestWithQueryParameters() async throws {
         let request = GetProductsRequest(limit: 3)
         let response = try await client.perform(request)
-        let productList: ProductList = response.data
+        let productList: ProductList = try response.decodedData
 
         #expect(productList.products.count == 3)
         #expect(productList.total >= 3)
@@ -38,7 +38,7 @@ struct HttpClientTests {
     func testGetRequestWithNoParameters() async throws {
         let request = GetAllProductsRequest()
         let response = try await client.perform(request)
-        let productList: ProductList = response.data
+        let productList: ProductList = try response.decodedData
 
         #expect(productList.products.count == 30)  // Default limit
         #expect(productList.products.first?.id == 1)
@@ -56,7 +56,7 @@ struct HttpClientTests {
             )
         )
         let response = try await client.perform(newProduct)
-        let product: Product = response.data
+        let product: Product = try response.decodedData
 
         #expect(product.id > 0)  // DummyJSON returns a new ID
         #expect(product.title == "Test Product")
@@ -77,7 +77,7 @@ struct HttpClientTests {
             )
         )
         let response = try await client.perform(updateProduct)
-        let product: Product = response.data
+        let product: Product = try response.decodedData
 
         #expect(product.id == 1)
         #expect(product.title == "Updated Product Title")
@@ -90,7 +90,7 @@ struct HttpClientTests {
     func testDeleteRequestWithPathParameter() async throws {
         let request = DeleteProductRequest(id: "1")
         let response = try await client.perform(request)
-        let product: Product = response.data
+        let product: Product = try response.decodedData
 
         // DummyJSON returns the deleted product
         #expect(product.id == 1)
@@ -101,7 +101,7 @@ struct HttpClientTests {
     func testGetRequestWithMixedPathAndQueryParameters() async throws {
         let request = GetProductsByCategoryRequest(category: "smartphones", limit: 5)
         let response = try await client.perform(request)
-        let productList: ProductList = response.data
+        let productList: ProductList = try response.decodedData
 
         #expect(productList.products.count == 5)
         #expect(productList.products.allSatisfy { $0.category == "smartphones" })
@@ -111,7 +111,7 @@ struct HttpClientTests {
     func testGetRequestWithSpecialCharactersInQuery() async throws {
         let request = SearchProductsRequest(q: "phone")
         let response = try await client.perform(request)
-        let productList: ProductList = response.data
+        let productList: ProductList = try response.decodedData
 
         // DummyJSON should return products matching "phone"
         #expect(productList.products.count > 0)
@@ -122,7 +122,7 @@ struct HttpClientTests {
     func testGetRequestWithNumericQueryParameters() async throws {
         let request = GetProductsWithPaginationRequest(skip: 10, limit: 10)
         let response = try await client.perform(request)
-        let productList: ProductList = response.data
+        let productList: ProductList = try response.decodedData
 
         #expect(productList.products.count == 10)
         #expect(productList.skip == 10)
@@ -133,7 +133,7 @@ struct HttpClientTests {
     func testGetRequestWithBooleanQueryParameters() async throws {
         let request = GetProductsWithFiltersRequest(select: "title,price,category")
         let response = try await client.perform(request)
-        let productList: ProductList = response.data
+        let productList: ProductList = try response.decodedData
 
         // DummyJSON should return products with only selected fields
         #expect(productList.products.count > 0)
@@ -168,7 +168,7 @@ struct HttpClientTests {
 
         let request = GetProductRequest(id: "1")
         let response = try await customClient.perform(request)
-        let product: Product = response.data
+        let product: Product = try response.decodedData
 
         #expect(product.id == 1)
     }

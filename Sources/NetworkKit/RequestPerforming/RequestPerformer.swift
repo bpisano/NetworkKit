@@ -32,11 +32,7 @@ import Foundation
 /// - **Async/Await Support**: Modern Swift concurrency support
 /// - **Error Handling**: Proper error propagation from URLSession
 /// - **Memory Efficient**: Uses streaming data processing for large responses
-///
-/// ## Thread Safety
-///
-/// This struct is thread-safe and can be used from concurrent contexts.
-/// It conforms to `Sendable` to enforce this requirement.
+/// 
 struct RequestPerformer: Sendable {
     /// Performs an HTTP request and returns the response data and metadata.
     ///
@@ -59,14 +55,16 @@ struct RequestPerformer: Sendable {
     ///
     /// - Parameters:
     ///   - urlRequest: The URLRequest to perform
+    ///   - session: The URLSession to use for the request
     ///   - onProgress: Optional closure called with progress updates during the request
     /// - Returns: A tuple containing the response data and URLResponse
     /// - Throws: An error if the request fails or data cannot be processed
     func perform(
         urlRequest: URLRequest,
+        with session: URLSession,
         onProgress: ((Progress) -> Void)? = nil
     ) async throws -> (data: Data, response: URLResponse) {
-        let (bytes, response) = try await URLSession.shared.bytes(for: urlRequest)
+        let (bytes, response) = try await session.bytes(for: urlRequest)
         let length: Int = Int(response.expectedContentLength)
         var data: Data = .init(capacity: length)
         var receivedBytesCount: Int64 = 0

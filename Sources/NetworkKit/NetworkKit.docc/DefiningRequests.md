@@ -29,7 +29,6 @@ NetworkKit uses Swift macros to transform simple struct definitions into fully-f
   - [Request Bodies](#request-bodies)
 - [Custom Headers](#custom-headers)
 - [MultipartForm](#multipartform)
-- [Best Practices](#best-practices)
 
 ## Basic Request Structure
 
@@ -257,6 +256,46 @@ struct GetPostRequest {
 
 The property names must match the parameter names in the path (`:id` → `id`, `:postId` → `postId`).
 
+#### Supported Types
+
+Path parameters work with any type that conforms to `PathRepresentable`. NetworkKit provides built-in support for:
+
+- **String types:** `String`, `Substring`, `Character`
+- **Integer types:** `Int`, `Int8`, `Int16`, `Int32`, `Int64`, `UInt`, `UInt8`, `UInt16`, `UInt32`, `UInt64`
+- **Floating point types:** `Float`, `Double`, `Decimal`
+- **Boolean type:** `Bool`
+- **Foundation types:** `UUID`, `Date`, `URL`, `NSNumber`
+- **Arrays:** `[Element]` where `Element: PathRepresentable`
+
+```swift
+@Get("/users/:userId/posts/:postId/active/:isPublished")
+struct GetPostRequest {
+    @Path
+    var userId: UUID      // Converted to UUID string
+    
+    @Path
+    var postId: Int       // Converted to string representation
+    
+    @Path
+    var isPublished: Bool // Converted to "true" or "false"
+}
+```
+
+#### Custom Parameter Names
+
+You can specify custom parameter names:
+
+```swift
+@Get("/users/:userId/posts/:docId")
+struct GetPostRequest {
+    @Path("userId")
+    var userIdentifier: String
+    
+    @Path("docId")
+    var documentId: String
+}
+```
+
 ### Query Parameters
 
 Use `@Query` for URL query parameters:
@@ -275,7 +314,48 @@ struct SearchRequest {
 }
 ```
 
-Query parameter types must conform to `CustomStringConvertible`.
+#### Supported Types
+
+Query parameters work with any type that conforms to `QueryRepresentable`. NetworkKit provides built-in support for:
+
+- **String types:** `String`, `Substring`, `Character`
+- **Integer types:** `Int`, `Int8`, `Int16`, `Int32`, `Int64`, `UInt`, `UInt8`, `UInt16`, `UInt32`, `UInt64`
+- **Floating point types:** `Float`, `Double`, `Decimal`
+- **Boolean type:** `Bool` (converted to "true"/"false")
+- **Foundation types:** `UUID`, `Date`, `URL`, `NSNumber`
+- **Arrays:** `[Element]` where `Element: QueryRepresentable` (elements joined with commas)
+
+```swift
+@Get("/users")
+struct GetUsersRequest {
+    @Query
+    let userId: UUID          // Converted to UUID string
+    
+    @Query
+    let page: Int            // Converted to string representation
+    
+    @Query
+    let includeActive: Bool  // Converted to "true" or "false"
+    
+    @Query
+    let tags: [String]       // Converted to comma-separated values
+}
+```
+
+#### Custom Parameter Names
+
+You can specify custom parameter names:
+
+```swift
+@Get("/search")
+struct SearchRequest {
+    @Query("q")
+    let searchTerm: String
+    
+    @Query("page_size")
+    let itemsPerPage: Int
+}
+```
 
 ### Request Bodies
 
@@ -335,49 +415,6 @@ struct UploadFileRequest {
                 fileName: "image.jpg"
             )
             TextField("description", value: description)
-        }
-    }
-}
-```
-
-## Best Practices
-
-### 1. Use Descriptive Names
-
-```swift
-// Good
-@Get("/users/:userId/orders")
-struct GetUserOrdersRequest {
-    @Path
-    var userId: String
-}
-
-// Avoid
-@Get("/users/:userId/orders")
-struct Request {
-    @Path
-    var userId: String
-}
-```
-
-### 2. Group Related Requests
-
-```swift
-enum UserAPI {
-    @Get("/users/:id")
-    @Response(User.self)
-    struct Get {
-        @Path
-        var id: String
-    }
-    
-    @Post("/users")
-    @Response(User.self)
-    struct Create {
-        @Body
-        struct UserData {
-            let name: String
-            let email: String
         }
     }
 }

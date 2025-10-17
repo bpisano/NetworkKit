@@ -50,6 +50,9 @@ enum HttpMethodMacroBase {
         // Find all @Query-annotated properties
         let queryIdentifiers = findQueryProperties(in: declaration)
 
+        // Find all @Path-annotated properties
+        let pathIdentifiers = findPathProperties(in: declaration)
+
         // Find the @Body struct
         let bodyType = findBodyType(in: declaration)
 
@@ -72,6 +75,7 @@ enum HttpMethodMacroBase {
             accessModifier: accessModifier,
             method: macroType.httpMethodName,
             queryIdentifiers: queryIdentifiers,
+            pathIdentifiers: pathIdentifiers,
             bodyType: bodyType,
             hasExistingBody: hasExistingBody,
             hasResponseMacro: hasResponseMacro,
@@ -280,6 +284,25 @@ enum HttpMethodMacroBase {
         return queryIdentifiers
     }
 
+    /// Finds all properties annotated with @Path in the declaration
+    private static func findPathProperties(in declaration: some DeclGroupSyntax) -> [String] {
+        var pathIdentifiers: [String] = []
+
+        for member in declaration.memberBlock.members {
+            guard let varDecl = member.decl.as(VariableDeclSyntax.self),
+                let binding = varDecl.bindings.first,
+                let pattern = binding.pattern.as(IdentifierPatternSyntax.self)
+            else { continue }
+
+            // Check if this property has a @Path attribute
+            if hasPathAttribute(varDecl) {
+                pathIdentifiers.append(pattern.identifier.text)
+            }
+        }
+
+        return pathIdentifiers
+    }
+
     /// Checks if a variable declaration has a @Query attribute
     private static func hasQueryAttribute(_ varDecl: VariableDeclSyntax) -> Bool {
         for attr in varDecl.attributes {
@@ -288,6 +311,20 @@ enum HttpMethodMacroBase {
             let attributeName = attribute.attributeName.description.trimmingCharacters(
                 in: .whitespacesAndNewlines)
             if attributeName == "Query" {
+                return true
+            }
+        }
+        return false
+    }
+
+    /// Checks if a variable declaration has a @Path attribute
+    private static func hasPathAttribute(_ varDecl: VariableDeclSyntax) -> Bool {
+        for attr in varDecl.attributes {
+            guard let attribute = attr.as(AttributeSyntax.self) else { continue }
+
+            let attributeName = attribute.attributeName.description.trimmingCharacters(
+                in: .whitespacesAndNewlines)
+            if attributeName == "Path" {
                 return true
             }
         }
@@ -326,17 +363,18 @@ enum HttpMethodMacroBase {
         return false
     }
 
-    /// Generates the required declarations for the HTTP request
+    /// Generates all required declarations for the HTTP request
     private static func generateDeclarations(
         path: String,
         responseType: String?,
         accessModifier: String,
         method: String,
         queryIdentifiers: [String],
+        pathIdentifiers: [String],
         bodyType: String?,
         hasExistingBody: Bool,
-        hasResponseMacro: Bool = false,
-        hasExternalResponseMacro: Bool = false,
+        hasResponseMacro: Bool,
+        hasExternalResponseMacro: Bool,
         declaration: some DeclGroupSyntax
     ) -> [DeclSyntax] {
         var declarations: [DeclSyntax] = []
@@ -372,8 +410,14 @@ enum HttpMethodMacroBase {
             accessModifier: accessModifier,
             queryIdentifiers: queryIdentifiers
         )
+        let pathParametersDecl = generatePathParametersDeclaration(
+            accessModifier: accessModifier,
+            pathIdentifiers: pathIdentifiers
+        )
 
-        declarations.append(contentsOf: [pathDecl, methodDecl, queryParametersDecl])
+        declarations.append(contentsOf: [
+            pathDecl, methodDecl, queryParametersDecl, pathParametersDecl,
+        ])
 
         // Add body property if there's a body type
         if let bodyType = bodyType {
@@ -401,6 +445,24 @@ enum HttpMethodMacroBase {
             \(raw: accessModifier)var queryParameters: [QueryParameter] {
                 [
                     \(raw: queryParamLines.joined(separator: ",\n"))
+                ]
+            }
+            """
+    }
+
+    /// Generates the pathParameters computed property declaration
+    private static func generatePathParametersDeclaration(
+        accessModifier: String,
+        pathIdentifiers: [String]
+    ) -> DeclSyntax {
+        let pathParamLines: [String] = pathIdentifiers.map { identifier in
+            "_path\(identifier.prefix(1).uppercased() + identifier.dropFirst())"
+        }
+
+        return """
+            \(raw: accessModifier)var pathParameters: [PathParameter] {
+                [
+                    \(raw: pathParamLines.joined(separator: ",\n"))
                 ]
             }
             """

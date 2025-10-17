@@ -4,9 +4,9 @@ public struct QueryParameter: RequestModifier {
     public let key: String
     public let value: String?
 
-    public init(key: String, value: CustomStringConvertible?) {
+    public init<T: QueryRepresentable>(key: String, value: T?) {
         self.key = key
-        self.value = value?.description
+        self.value = value?.queryValue
     }
 
     func modify(_ urlRequest: inout URLRequest) throws {
