@@ -58,10 +58,10 @@ Requests define the API endpoints and parameters. They're reusable across all en
 @Response(User.self)
 struct GetUserRequest {
     @Path
-    var id: String
+    let id: String
 
     @Query
-    var includePosts: Bool
+    let includePosts: Bool
 }
 ```
 
@@ -90,10 +90,10 @@ NetworkKit comes with several macros to simplify and streamline request declarat
 @Get("/users")
 struct GetUsersRequest {
     @Query
-    var page: Int
+    let page: Int
 
     @Query
-    var limit: Int
+    let limit: Int
 }
 ```
 
@@ -140,7 +140,7 @@ Content-Type: application/json
 @Put("/users/:id")
 struct UpdateUserRequest {
     @Path
-    var id: String
+    let id: String
     
     @Body
     struct Body: HttpBody {
@@ -171,7 +171,7 @@ Content-Type: application/json
 @Delete("/users/:id")
 struct DeleteUserRequest {
     @Path
-    var id: String
+    let id: String
 }
 ```
 
@@ -190,7 +190,7 @@ DELETE https://api.example.com/users/123
 @Patch("/users/:id")
 struct PatchUserRequest {
     @Path
-    var id: String
+    let id: String
     
     @Body
     struct Body: HttpBody {
@@ -220,7 +220,7 @@ Content-Type: application/json
 @Head("/users/:id")
 struct CheckUserRequest {
     @Path
-    var id: String
+    let id: String
 }
 ```
 
@@ -256,10 +256,10 @@ OPTIONS https://api.example.com/users
 @Connect("/proxy")
 struct ConnectProxyRequest {
     @Query
-    var host: String
+    let host: String
     
     @Query
-    var port: Int
+    let port: Int
 }
 ```
 
@@ -300,7 +300,7 @@ The `@Response` macro allows you to define the type of the response your request
 @Response(User.self)
 struct GetUserRequest {
     @Path
-    var id: String
+    let id: String
 }
 ```
 
@@ -318,7 +318,7 @@ struct GetUserRequest {
     }
 
     @Path
-    var id: String
+    let id: String
 }
 ```
 
@@ -334,10 +334,10 @@ Use `@Path` for URL path parameters. These are replaced in the URL path at runti
 @Get("/users/:id/posts/:postId")
 struct GetPostRequest {
     @Path
-    var id: String
+    let id: String
     
     @Path
-    var postId: String
+    let postId: String
 }
 ```
 
@@ -357,10 +357,10 @@ You can also specify custom path parameter names:
 @Get("/users/:userId/posts/:postId")
 struct GetPostRequest {
     @Path("userId")
-    var userIdentifier: String
+    let userIdentifier: String
     
     @Path("postId")
-    var documentId: String
+    let documentId: String
 }
 ```
 
@@ -381,13 +381,13 @@ Use `@Query` for URL query parameters. These are automatically added to the URL:
 @Get("/search")
 struct SearchRequest {
     @Query
-    var query: String
+    let query: String
     
     @Query
-    var page: Int
+    let page: Int
 
     @Query
-    var limit: Int
+    let limit: Int
 }
 ```
 
@@ -406,7 +406,7 @@ You can also provide the name of the query parameter explicitly:
 @Get("/search")
 struct SearchRequest {
     @Query("q")
-    var query: String
+    let query: String
 }
 ```
 
